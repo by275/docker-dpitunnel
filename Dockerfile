@@ -21,7 +21,7 @@ RUN \
 # 
 FROM base AS dpitunnel-cli
 
-ARG DT_VER=v1.1
+ARG DT_VER
 
 RUN \
     echo "**** build dpitunnel-cli ${DT_VER} ****" && \
@@ -31,18 +31,6 @@ RUN \
     cd /tmp/dpitunnel && \
     bash build_static_alpine.sh
 
-
-FROM base AS python-proxy
-
-RUN \
-    echo "**** install python-proxy ****" && \
-    apk add --no-cache \
-        build-base \
-        musl-dev \
-        python3-dev && \
-    pip3 install --root /bar --no-warn-script-location \
-        pproxy[accelerated]
-
 # 
 # COLLECT
 # 
@@ -51,9 +39,6 @@ FROM base AS collector
 # add s6-overlay
 COPY --from=prebuilt /s6/ /bar/
 ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/adduser /bar/etc/cont-init.d/10-adduser
-
-# add python-proxy
-COPY --from=python-proxy /bar /bar
 
 # add dpitunnel-cli
 COPY --from=dpitunnel-cli /tmp/dpitunnel/build/DPITunnel-cli-exec /bar/usr/local/bin/dpitunnel-cli
@@ -88,6 +73,18 @@ FROM base
 LABEL maintainer="by275"
 LABEL org.opencontainers.image.source https://github.com/by275/docker-dpitunnel
 
+RUN \
+    echo "**** install python-proxy ****" && \
+    apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
+        py3-uvloop \
+        py3-pycryptodome \
+        && \
+    pip3 install pproxy[accelerated] && \
+    echo "**** cleanup ****" && \
+    rm -rf \
+        /tmp/* \
+        /root/.cache
+
 COPY --from=collector /bar/ /
 
 ENV \
@@ -100,7 +97,7 @@ ENV \
     PROXY_ENABLED=true \
     PROXY_PORT=8008
 
-EXPOSE 8008
+EXPOSE ${DT_PORT} ${PROXY_PORT}
 VOLUME /config
 
 HEALTHCHECK --interval=10m --timeout=30s --start-period=10s --retries=3 \
