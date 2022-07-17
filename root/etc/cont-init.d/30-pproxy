@@ -1,0 +1,5 @@
+#!/usr/bin/with-contenv bash
+
+if [ "${PROXY_ENABLED}" = "true" ]; then
+    echo "*** $(pproxy --version) ready!"
+fi

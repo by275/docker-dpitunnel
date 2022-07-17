@@ -1,0 +1,90 @@
+name: buildx
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+
+env:
+  IMAGE_NAME: ghcr.io/by275/dpitunnel
+
+jobs:
+  buildx:
+    runs-on: ubuntu-20.04
+    if: github.event_name != 'pull_request'
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Get Variables
+        run: |
+          DT_VER=$(curl -fsSL https://api.github.com/repos/zhenyolka/DPITunnel-cli/releases/latest | jq -r '.tag_name')
+          echo "DT_VER=$DT_VER" >> $GITHUB_ENV
+          VER_FULL=${DT_VER:1}
+          echo "VER_FULL=$VER_FULL" >> $GITHUB_ENV
+          VER_MAJOR=$(echo $VER_FULL | cut -d. -f-1)
+          echo "VER_MAJOR=$VER_MAJOR" >> $GITHUB_ENV
+      - 
+        name: Initial Buildx
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          tags: ${{ env.IMAGE_NAME }}:testing
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          build-args: |
+            DT_VER=${{ env.DT_VER }}
+      - 
+        name: Load Built Image and Test
+        run: |
+          docker buildx build \
+            -t ${{ env.IMAGE_NAME }}:testing \
+            --platform=linux/amd64 \
+            --build-arg DT_VER=${{ env.DT_VER }} \
+            --load \
+            .
+          CID=$(docker run -d ${{ env.IMAGE_NAME }}:testing)
+          sleep 5s
+          if [ $(docker exec -i $CID dpitunnel-cli --help | head -1 | cut -d, -f1) != "DPITunnel-cli" ]; then          
+            exit 1
+          fi
+      -
+        name: Login to ghcr.io
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GHCR_PAT }}
+      - 
+        name: Buildx and Push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ env.VER_FULL }}
+            ${{ env.IMAGE_NAME }}:${{ env.VER_MAJOR }}
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          build-args: |
+            DT_VER=${{ env.DT_VER }}
+          push: true
+      -
+        name: Notification
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          description: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ env.VER_FULL }}
+            ${{ env.IMAGE_NAME }}:${{ env.VER_MAJOR }}

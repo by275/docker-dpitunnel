@@ -1,0 +1,5 @@
+#!/usr/bin/with-contenv bash
+
+if [ "${DT_ENABLED}" = "true" ]; then
+    echo "*** $(dpitunnel-cli --help | awk -F , 'NR==1{print $1}') ready!"
+fi

@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bash
+
+if [ "${DT_ENABLED}" != "true" ] && [ "${PROXY_ENABLED}" != "true" ]; then
+    echo "*** ERROR: No services available"
+    exit 1
+fi
+
+# permissions
+chown -R abc:abc \
+    /config

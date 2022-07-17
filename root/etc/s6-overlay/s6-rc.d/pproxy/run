@@ -1,0 +1,21 @@
+#!/usr/bin/with-contenv bash
+
+if [ "${PROXY_ENABLED}" != "true" ]; then
+    s6-svc -d .
+    exit 0
+fi
+
+[ "${DT_ENABLED}" = "true" ] && \
+    s6-svwait -u /var/run/service/dt && sleep 1s
+
+command="pproxy -l http://0.0.0.0:${PROXY_PORT}"
+if [[ -n ${PROXY_USER:-} ]] && [[ -n ${PROXY_PASS:-} ]]; then
+    command="$command#${PROXY_USER}:${PROXY_PASS}"
+fi
+if [ "${DT_ENABLED}" = "true" ]; then
+    command="$command -r http://127.0.0.1:${DT_PORT}"
+fi
+command="$command --auth ${PROXY_AUTHTIME:-0}${PROXY_VERBOSE+ -v}"
+
+echo "*** executing => $command"
+exec s6-setuidgid abc $command
