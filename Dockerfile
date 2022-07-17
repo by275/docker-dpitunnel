@@ -5,16 +5,16 @@ FROM ghcr.io/by275/base:alpine${ALPINE_VER} AS base
 
 RUN \
     echo "**** install frolvlad/alpine-python3 ****" && \
-	apk add --no-cache python3 && \
-	if [ ! -e /usr/bin/python ]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
-	python3 -m ensurepip && \
-	rm -r /usr/lib/python*/ensurepip && \
-	pip3 install --no-cache --upgrade pip setuptools wheel && \
-	if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip; fi && \
-	echo "**** cleanup ****" && \
-	rm -rf \
-		/tmp/* \
-		/root/.cache
+    apk add --no-cache python3 && \
+    if [ ! -e /usr/bin/python ]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    pip3 install --no-cache --upgrade pip setuptools wheel && \
+    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip; fi && \
+    echo "**** cleanup ****" && \
+    rm -rf \
+        /tmp/* \
+        /root/.cache
 
 # 
 # BUILD
@@ -25,10 +25,10 @@ ARG DT_VER=v1.1
 
 RUN \
     echo "**** build dpitunnel-cli ${DT_VER} ****" && \
-	apk add --no-cache \
+    apk add --no-cache \
         git && \
-	git clone https://github.com/zhenyolka/DPITunnel-cli.git /tmp/dpitunnel -b "${DT_VER}" --depth 1 && \
-	cd /tmp/dpitunnel && \
+    git clone https://github.com/zhenyolka/DPITunnel-cli.git /tmp/dpitunnel -b "${DT_VER}" --depth 1 && \
+    cd /tmp/dpitunnel && \
     bash build_static_alpine.sh
 
 

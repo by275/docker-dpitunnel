@@ -51,4 +51,4 @@ As dpitunnel is binding to ```0.0.0.0:8080```, you can directly access it indepe
 | ```DT_PORT```  | to run dpitunnel in different port  | ```8080```  |
 | ```DT_USER_OPTS```  | extra agruments which will be passed to [DPITunnel-cli](https://github.com/zhenyolka/DPITunnel-cli)  | ```--desync-attacks=disorder_fake --wrong-seq```  |
 | ```DT_DOH```  | resolve hosts over DoH server  | ```false```  |
-| ```DT_DNSSERVER```  | DoH server URL  | ```https://dns.google/dns-query```  |
+| ```DT_DOHSERVER```  | DoH server URL  | ```https://dns.google/dns-query```  |
