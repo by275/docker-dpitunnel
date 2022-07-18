@@ -82,6 +82,8 @@ RUN \
     pip3 install pproxy[accelerated] && \
     echo "**** install others ****" && \
     apk add --no-cache \
+        grep \
+        moreutils \
         sed \
         && \
     echo "**** cleanup ****" && \
