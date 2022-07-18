@@ -76,10 +76,14 @@ LABEL org.opencontainers.image.source https://github.com/by275/docker-dpitunnel
 RUN \
     echo "**** install python-proxy ****" && \
     apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
-        py3-uvloop \
         py3-pycryptodome \
+        py3-uvloop \
         && \
     pip3 install pproxy[accelerated] && \
+    echo "**** install others ****" && \
+    apk add --no-cache \
+        sed \
+        && \
     echo "**** cleanup ****" && \
     rm -rf \
         /tmp/* \

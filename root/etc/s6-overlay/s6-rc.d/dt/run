@@ -12,4 +12,4 @@ command="$command${DT_DOH+ --ca-bundle-path=/etc/ssl/cert.pem --doh}"
 command="$command${DT_DOHSERVER+ --doh-server=$DT_DOHSERVER}"
 
 echo "*** executing => $command"
-exec $command
+exec $command | sed -u 's/^/[DPITunnel] /'
