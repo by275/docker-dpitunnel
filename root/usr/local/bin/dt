@@ -1,0 +1,10 @@
+#!/bin/bash
+
+CAfile=/etc/ssl/cert.pem
+CAtemp=ca.bundle
+
+if [ -f "${CAfile}" ] && [ ! -f "${CAtemp}" ]; then
+    cp "$CAfile" "${CAtemp}"
+fi
+
+exec dpitunnel-cli "$@"
