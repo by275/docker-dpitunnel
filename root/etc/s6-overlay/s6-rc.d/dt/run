@@ -5,9 +5,7 @@ if [ "${DT_ENABLED}" != "true" ]; then
     exit 0
 fi
 
-IFS=" " read -r -a dt_user_opts <<< "$DT_USER_OPTS"
-
-command="dpitunnel-cli --port ${DT_PORT} ${dt_user_opts[@]}"
+command="dpitunnel-cli --port ${DT_PORT} ${DT_USER_OPTS}"
 command="$command${DT_DOH+ --ca-bundle-path=/etc/ssl/cert.pem --doh}"
 command="$command${DT_DOHSERVER+ --doh-server=$DT_DOHSERVER}"
 

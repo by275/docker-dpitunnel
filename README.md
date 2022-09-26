@@ -29,7 +29,7 @@ Up and run your container as above. Then you can access to your password-authent
 Python-proxy running at front will forward all your requests to the internally working dpitunnel below
 
 ```bash
-dpitunnel-cli --port ${DT_PORT:-8080} ${DT_USER_OPTS[@]}
+dpitunnel-cli --port ${DT_PORT:-8080} ${DT_USER_OPTS}
 ```
 
 ## Direct connection to DPITunnel
