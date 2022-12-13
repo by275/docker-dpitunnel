@@ -1,4 +1,4 @@
-ARG ALPINE_VER=3.16
+ARG ALPINE_VER=3.17
 
 FROM ghcr.io/by275/base:alpine AS prebuilt
 FROM ghcr.io/by275/base:alpine${ALPINE_VER} AS base
@@ -75,7 +75,7 @@ LABEL org.opencontainers.image.source https://github.com/by275/docker-dpitunnel
 
 RUN \
     echo "**** install python-proxy ****" && \
-    apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
+    apk add --no-cache \
         py3-pycryptodome \
         py3-uvloop \
         && \
