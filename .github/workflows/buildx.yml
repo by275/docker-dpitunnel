@@ -33,7 +33,7 @@ jobs:
           echo "VER_MAJOR=$VER_MAJOR" >> $GITHUB_ENV
       - 
         name: Initial Buildx
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: Dockerfile
@@ -64,7 +64,7 @@ jobs:
           password: ${{ secrets.GHCR_PAT }}
       - 
         name: Buildx and Push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: Dockerfile
