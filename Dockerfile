@@ -21,13 +21,11 @@ RUN \
 # 
 FROM base AS dpitunnel-cli
 
-ARG DT_VER
-
 RUN \
-    echo "**** build dpitunnel-cli ${DT_VER} ****" && \
+    echo "**** build dpitunnel-cli ****" && \
     apk add --no-cache \
         git && \
-    git clone https://github.com/zhenyolka/DPITunnel-cli.git /tmp/dpitunnel -b "${DT_VER}" --depth 1 && \
+    git clone https://github.com/nomoresat/DPITunnel-cli.git /tmp/dpitunnel --depth 1 && \
     cd /tmp/dpitunnel && \
     bash build_static_alpine.sh
 

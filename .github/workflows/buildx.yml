@@ -8,6 +8,7 @@ on:
 
 env:
   IMAGE_NAME: ghcr.io/by275/dpitunnel
+  DT_VER: 1.2b
 
 jobs:
   buildx:
@@ -25,9 +26,7 @@ jobs:
       -
         name: Get Variables
         run: |
-          DT_VER=$(curl -fsSL https://api.github.com/repos/zhenyolka/DPITunnel-cli/releases/latest | jq -r '.tag_name')
-          echo "DT_VER=$DT_VER" >> $GITHUB_ENV
-          VER_FULL=${DT_VER:1}
+          VER_FULL="${{ env.DT_VER }}"
           echo "VER_FULL=$VER_FULL" >> $GITHUB_ENV
           VER_MAJOR=$(echo $VER_FULL | cut -d. -f-1)
           echo "VER_MAJOR=$VER_MAJOR" >> $GITHUB_ENV
